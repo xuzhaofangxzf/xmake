@@ -126,7 +126,19 @@ function _load_vcvarsall(vcvarsall, vsver, arch, opt)
     file:close()
 
     -- run genvcvars.bat
-    local outdata = try {function () return os.iorun(genvcvars_bat) end}
+    local outdata
+    try {
+        function ()
+            outdata = os.iorun(genvcvars_bat)
+        end,
+        catch {
+            function (errors)
+                if type(errors) == "table" then
+                    outdata = errors.stdout
+                end
+            end
+        }
+    }
     if not outdata then
         return
     end
